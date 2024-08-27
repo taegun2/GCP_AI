@@ -1,0 +1,36 @@
+import json
+from google.cloud import pubsub_v1
+import functions_framework
+
+# GCS 이벤트가 발생했을 때 트리거되는 함수
+@functions_framework.cloud_event
+def notify_pubsub(cloud_event):
+    # GCS 이벤트에서 데이터 추출
+    data = cloud_event.data
+    file_name = data['name']
+    bucket_name = data['bucket']
+
+    # 비디오 파일 경로
+    video_path = file_name
+
+    # Pub/Sub 주제 경로 설정
+    project_id = "andong-24-team-103"
+    topic_id = "url"
+    
+    publisher = pubsub_v1.PublisherClient()
+    topic_path = publisher.topic_path(project_id, topic_id)
+
+    # 발행할 메시지 데이터
+    message_data = {
+        'bucket_name': bucket_name,
+        'video_path': video_path,
+        'callback_url': 'https://codaservice-imgzdl6sva-uc.a.run.app/callback'
+    }
+    
+    # 메시지를 JSON 형식으로 인코딩
+    message_json = json.dumps(message_data)
+    message_bytes = message_json.encode('utf-8')
+    
+    # Pub/Sub에 메시지 발행
+    future = publisher.publish(topic_path, data=message_bytes)
+    print(f"Published message to {topic_path}: {future.result()}")

@@ -14,7 +14,7 @@ import os
 app = Flask(__name__)
 
 # GOOGLE_APPLICATION_CREDENTIALS 환경 변수 설정
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "andong-24-team-103-50e1b79846cb.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
 
 # MediaPipe 초기화
 mp_hands = mp.solutions.hands
@@ -146,5 +146,5 @@ if __name__ == '__main__':
     listener_thread = threading.Thread(target=start_pubsub_listener)
     listener_thread.start()
 
-    # Flask 서버를 항상 포트 8888에서 실행
+    # Flask 서버를 항상 포트 5000에서 실행
     app.run(host='0.0.0.0', port=5000)
